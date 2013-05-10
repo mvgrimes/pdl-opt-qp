@@ -171,8 +171,8 @@ pp_addpm({At=>'Bot'},<<'EOD');
 sub qp {
   my ($Dmat, $dvec, $Amat, $bvec, $meq) = @_;
 
-  my $n = $Dmat->dim(1);    # D is an [n x n] matrix
-  my $q = $Amat->dim(0);    # A is an [n x q] matrix
+  my $n = pdl $Dmat->dim(1);    # D is an [n x n] matrix
+  my $q = pdl $Amat->dim(0);    # A is an [n x q] matrix
 
   if( ! defined $bvec ){    # if b is undef, create it
     $bvec = zeros($q);
@@ -192,10 +192,10 @@ sub qp {
   my $iact = zeros($q);              # Store which constraints are active
   my $nact = pdl(0);                 # Store number of active constraints
   my $r    = $n < $q ? $n : $q;      # Used to size work space
-  my $sol  = zeros($n);              # Store the solution [n]
-  my $lagr = zeros($q);              # Store the Lagranges for the constraints
+  my $sol  = zeros($n->sclr);              # Store the solution [n]
+  my $lagr = zeros($q->sclr);              # Store the Lagranges for the constraints
   my $crval= pdl(0);                 # Value at min
-  my $work = zeros(2*$n+$r*($r+5)/2+2*$q+1);  # Work space
+  my $work = zeros((2*$n+$r*($r+5)/2+2*$q+1)->sclr);  # Work space
   my $iter = zeros(2);               # Store info about interations
   my $ierr = pdl(0);                 # Input: 1=Factorized; Output: error flag
 

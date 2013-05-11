@@ -19,7 +19,7 @@ my $dmat = pdl q[ 0.0100 0.0018 0.0011 ;
                   0.0011 0.0026 0.0199 ];
 my $dvec = zeros(3);
 my $amat = $mu->glue(0,ones(1,3))->copy;
-my $bvec = pdl($mu_0)->glue(1, ones(1));
+my $bvec = pdl($mu_0)->glue(1, ones(1))->flat;
 my $meq  = pdl(2);
 
 say "n    = ", $mu->nelem;

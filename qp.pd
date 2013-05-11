@@ -204,7 +204,7 @@ sub qp {
                    $n, $n,
                    $sol, $lagr,
                    $crval,
-                   $Amat, $bvec, $n,
+                   $Amat->transpose, $bvec, $n,
                    $q, $meq,
                    $iact, $nact,
                    $iter, $work,

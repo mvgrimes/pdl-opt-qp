@@ -1,8 +1,8 @@
 # File of RegExps to skip:
 
-^_build$
+^_build
 ^Build$
-^blib$
+^blib
 ~$
 \.swp$
 \.bak$

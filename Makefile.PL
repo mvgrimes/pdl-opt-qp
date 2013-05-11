@@ -62,8 +62,6 @@ WriteMakefile(
 
 );
 
-print "f77 = ", $f77->compiler(), "\n";
-
 sub MY::postamble {
     my $mycompiler = $f77->compiler();
     my $mycflags   = $f77->cflags();             #." -ff2c ";

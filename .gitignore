@@ -18,6 +18,10 @@ tmp/
 Changes.bak
 t/data
 nytprof*
+*.o
+f77_underscore
+Makefile
+Makefile.org
 
 # podweaver backups
 *.pm.bak

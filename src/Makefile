@@ -3,10 +3,10 @@ CC = gcc
 F77 = /opt/local/bin/gfortran-mp-4.7
 CFLAGS = -O3 -fPIC
 
-all:    solve.QP.o
+all:    solve.QP.o dpofa.o dpo.o
 
-solve.QP.o : solve.QP.f
-	$(F77) $(CFLAGS) -c solve.QP.f
+%.o: %.f
+	$(F77) $(CFLAGS) -c $<
 
 clean : 
 	rm *.o

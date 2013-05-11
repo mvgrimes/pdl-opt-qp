@@ -63,16 +63,11 @@ typedef void (*paramv)();
 
 pp_addpm({At=>'Top'},<<'EOD');
 use strict;
+use warnings;
 use PDL::Ufunc;
 use PDL::Ops;
 use PDL::NiceSlice;
-
-{ 
-  package PDL;
-  use UNIVERSAL 'isa'; # need that later in info function
-  use Carp;
-}
-
+use Carp;
 
 =head1 NAME
 
@@ -200,26 +195,37 @@ sub qp {
   my $ierr = pdl(0);                 # Input: 1=Factorized; Output: error flag
 
   my $res = qpgen2(
-                   $Dmat, $dvec,
+                   $Dmat->copy, $dvec->copy,
                    $n, $n,
                    $sol, $lagr,
                    $crval,
-                   $Amat->transpose, $bvec, $n,
+                   $Amat->transpose->copy,
+                   $bvec->copy, $n,
                    $q, $meq,
                    $iact, $nact,
                    $iter, $work,
                    $ierr
         );
 
-  warn "### res = $res ###\n";
+  croak "qp: constraints are inconsistent, no solution!"
+      if $ierr->sclr == 1;
+  croak "qp: matrix D in quadratic function is not positive definite!"
+      if $ierr->sclr == 2;
+  croak "qp: some problem with mininization" if $ierr->sclr;
+
+  return {
+    x     => $sol,
+    lagr  => $lagr,
+    crval => $crval,
+    iact  => $iact,
+    nact  => $nact,
+    iter  => $iter,
+    ierr  => $ierr,
+  };
 
   # TODO: process/return the results
   #
   # From R implementation:
-  # if( res1$ierr == 1)
-  #   stop("constraints are inconsistent, no solution!")
-  # else if( res1$ierr == 2)
-  #   stop("matrix D in quadratic function is not positive definite!")
   #
   # list(solution=res1$sol,
   #      value=res1$crval,

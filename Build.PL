@@ -1,21 +1,27 @@
 use strict;
 use warnings;
 use Module::Build::PDL;
+use Devel::CheckLib;
 
 my @fortran_src_files = my @fortran_obj_files = glob("src/*.f");
 s{\.f$}{.o} for @fortran_obj_files;
 
-my $fortanlibs = ();
+sub fail { warn @_; exit 0; }
 
 BEGIN {
     eval "use ExtUtils::F77";
-    die "ExtUtils::F77 module not found. Will not build PDL::Opt::NonLinear\n"
+    fail "ExtUtils::F77 module not found. Build not possible.\n"
       if $@;
-    die "Not Fortran compiler found. Will not build PDL::Opt::NonLinear\n"
+    fail "No Fortran compiler found. Build not possible.\n"
       unless ExtUtils::F77->runtimeok;
-    die "No fortran compiler found. Will not build PDL::Opt::NonLinear"
+    fail "No fortran compiler found. Build not possible.\n"
       unless ExtUtils::F77->testcompiler;
-    $fortanlibs = ExtUtils::F77->runtime;
+
+    eval "use Devel::CheckLib;";
+    fail "Requires Devel::CheckLibs to build.\n"
+      if $@;
+
+    Devel::CheckLib::check_lib_or_exit( 'lib' => ['blas'] );
 }
 
 my $class = Module::Build::PDL->subclass(
@@ -63,9 +69,9 @@ my $builder = $class->new(
     create_readme     => 1,
 
     extra_compiler_flags => [],
-    ## Do we need $f77->runtime -lgfortran -lport or -L?
-    ## TODO: Need to require blas or atlas or something
-    extra_linker_flags => [ $fortanlibs, qw{ -lblas }, @fortran_obj_files ],
+    ## TODO: Need to provide the option to use atlas instead of blas, etc.
+    extra_linker_flags =>
+      [ ExtUtils::F77->runtime, qw{ -lblas }, @fortran_obj_files ],
     fortran_src_files => [@fortran_src_files],
 
     requires => {
@@ -74,6 +80,7 @@ my $builder = $class->new(
     configure_requires => {
         'Module::Build'      => '0.4004',
         'Module::Build::PDL' => '0.0.3',
+        'Devel::CheckLibs'   => '0.99',
     },
     build_requires => {
         'ExtUtils::F77'      => 0,

@@ -1,8 +1,7 @@
 our $VERSION = 0.01;
-
 use PDL::Exporter;
 
-pp_setversion(0.01);
+pp_setversion($VERSION);
 
 # Cargo culted from PDL::Opt::NonLinear
 pp_addhdr('
@@ -69,9 +68,11 @@ use PDL::Ops;
 use PDL::NiceSlice;
 use Carp;
 
+# ABSTRACT: Quadratic programming solver for PDL
+
 =head1 NAME
 
-PDL::Opt::QP - ....
+PDL::Opt::QP - Quadratic programming solver for PDL
 
 =head1 SYNOPSIS
 
@@ -236,24 +237,29 @@ sub qp {
 }
 EOD
 
-# Not sure if this is needed?
-pp_add_boot(<<EOB);
-   pdl1 = PDL->pdlnew();
-   pdl2 = PDL->pdlnew();
-   pdl3 = PDL->pdlnew();
-   pdl4 = PDL->pdlnew();
-   pdl5 = PDL->pdlnew();
-   sv_pdl1 = newSV(0);
-   sv_pdl2 = newSV(0);
-   sv_pdl3 = newSV(0);
-   sv_pdl4 = newSV(0);
-   sv_pdl5 = newSV(0);
-   PDL->SetSV_PDL(sv_pdl1, pdl1);
-   PDL->SetSV_PDL(sv_pdl2, pdl2);
-   PDL->SetSV_PDL(sv_pdl3, pdl3);
-   PDL->SetSV_PDL(sv_pdl4, pdl4);
-   PDL->SetSV_PDL(sv_pdl5, pdl5);
-EOB
+pp_addpm({At=>'Bot'},<<'EOD');
+
+=head1 SEE ALSO
+
+L<PDL>, L<PDL::Opt::NonLinear>
+
+=head1 BUGS
+
+Please report any bugs or suggestions at L<http://rt.cpan.org/>
+
+=head1 AUTHOR
+
+Mark Grimes, E<lt>mgrimes@cpan.orgE<gt>
+
+=head1 COPYRIGHT AND LICENSE
+
+This software is copyright (c) 2013 by Mark Grimes, E<lt>mgrimes@cpan.orgE<gt>.
+
+This is free software; you can redistribute it and/or modify it under
+the same terms as the Perl 5 programming language system itself.
+
+=cut
+EOD
 
 pp_done();  # you will need this to finish pp processing
 

@@ -9,9 +9,6 @@ __PACKAGE__->add_property('fortran_src_files');
 sub ACTION_build {
     my $self = shift;
 
-    use strict;
-    use warnings;
-
     eval "use ExtUtils::F77";
     die "ExtUtils::F77 module not found. Will not build PDL::Opt::NonLinear\n"
       if $@;
@@ -36,6 +33,17 @@ sub ACTION_build {
     }
 
     $self->SUPER::ACTION_build;
+}
+
+sub ACTION_distdir {
+    my ($self) = @_;
+
+    $self->do_system(
+        "perl -MPDL::PP=PDL::Opt::QP,PDL::Opt::QP,lib/PDL/Opt/QP lib/PDL/Opt/QP.pd && perldoc -u lib/PDL/Opt/QP.pm > lib/PDL/Opt/QP.pod"
+    );
+    $self->add_to_cleanup("lib/PDL/Opt/QP.pod");
+
+    $self->SUPER::ACTION_distdir;
 }
 
 1;

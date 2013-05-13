@@ -32,3 +32,4 @@ QP.xs
 # podweaver backups
 *.pm.bak
 
+lib/PDL/Opt/QP.pod

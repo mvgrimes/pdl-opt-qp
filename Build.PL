@@ -57,6 +57,7 @@ my $builder = Module::Build::PDL::Fortran->new(
     },
 
     recursive_test_files => 1,
+    release_status => 'testing',
 
     meta_merge => {
         resources => {

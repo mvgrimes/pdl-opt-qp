@@ -23,11 +23,11 @@
 ^nytprof.out$
 .DS_Store$
 
-^QP.bs$
-^QP.c$
-^QP.o$
-^QP.pm$
-^QP.xs$
+^lib/PDL/Opt/QP.bs$
+^lib/PDL/Opt/QP.c$
+^lib/PDL/Opt/QP.o$
+^lib/PDL/Opt/QP.pm$
+^lib/PDL/Opt/QP.xs$
 ^pm_to_blib$
 ^f77_underscore$
 ^Makefile.old$

@@ -4,12 +4,35 @@ PDL::Opt::QP - Quadratic programming solver for PDL
 
 # SYNOPSIS
 
+    use PDL;
+    use PDL::NiceSlice;
     use PDL::Opt::QP;
-    ...
+
+    my $mu   = pdl(q[ 0.0427 0.0015 0.0285 ])->transpose; # [ n x 1 ]
+    my $mu_0 = 0.0427;
+    my $dmat = pdl q[ 0.0100 0.0018 0.0011 ;
+                      0.0018 0.0109 0.0026 ;
+                      0.0011 0.0026 0.0199 ];
+    my $dvec = zeros(3);
+    my $amat = $mu->glue( 0, ones( 1, 3 ) )->copy;
+    my $bvec = pdl($mu_0)->glue( 1, ones(1) )->flat;
+    my $meq  = pdl(2);
+
+    my $sol = qp( $dmat, $dvec, $amat, $bvec, $meq );
+    say "Solution: ", $sol->{x};
 
 # DESCRIPTION
 
-...
+This routine uses Goldfarb/Idnani algorithm to solve the
+following minimization problem:
+
+           minimize  f(x) = 0.5 * x' D x  -  d' x
+              x
+
+    optionally constrained by:
+
+            A' x  = a
+            B  x >= b
 
 # FUNCTIONS
 

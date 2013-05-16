@@ -1,4 +1,9 @@
 Changes for PDL::Opt::QP
 
+0.20 - Thu May 16 12:21:50 EDT 2013
+    Converts to MB::Pluggable
+    Rearranges and adds a second interface with separate Aeq and Aneq
+    Still a work in progress (alpha)
+
 0.01 - Mon May 13 14:18:34 EDT 2013
     Initial (test) release of PDL::Opt::QP

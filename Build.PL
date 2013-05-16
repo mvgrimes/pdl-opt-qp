@@ -2,55 +2,28 @@
 
 use strict;
 use warnings;
-use lib qw{inc};
-use Module::Build::PDL::Fortran;
-use Devel::CheckLib;
+use Module::Build::Pluggable ( 'PDL', 'Fortran',
+    'CheckLib' => { lib => 'blas', } );
 
-my @fortran_src_files = my @fortran_obj_files = glob("src/*.f");
-s{\.f$}{.o} for @fortran_obj_files;
-
-sub fail { warn @_; exit 0; }
-
-BEGIN {
-    eval "use ExtUtils::F77";
-    fail "ExtUtils::F77 module not found. Build not possible.\n"
-      if $@;
-    fail "No Fortran compiler found. Build not possible.\n"
-      unless ExtUtils::F77->runtimeok;
-    fail "No fortran compiler found. Build not possible.\n"
-      unless ExtUtils::F77->testcompiler;
-
-    eval "use Devel::CheckLib;";
-    fail "Requires Devel::CheckLibs to build.\n"
-      if $@;
-
-    Devel::CheckLib::check_lib_or_exit( 'lib' => ['blas'] );
-}
-
-my $builder = Module::Build::PDL::Fortran->new(
+my $builder = Module::Build::Pluggable->new(
     module_name       => 'PDL::Opt::QP',
     dist_version_from => 'lib/PDL/Opt/QP.pd',
     license           => 'perl',
     create_readme     => 1,
 
-    extra_compiler_flags => [],
-    ## TODO: Need to provide the option to use atlas instead of blas, etc.
-    extra_linker_flags =>
-      [ ExtUtils::F77->runtime, qw{ -lblas }, @fortran_obj_files ],
-    fortran_src_files => [@fortran_src_files],
+    extra_linker_flags => [qw{ -lblas }],
+    f_source           => [qw{ src }],
 
     requires => {
         'PDL' => '2.00',
     },
     configure_requires => {
-        'Module::Build'      => '0.4004',
-        'Module::Build::PDL' => '0.0.3',
-        'Devel::CheckLibs'   => '0.99',
-        'parent'             => 0,
-    },
-    build_requires => {
-        'ExtUtils::F77'      => 0,
-        'ExtUtils::CBuilder' => 0,
+        'Module::Build'                      => '0.4004',
+        'Module::Build::Pluggable'           => '0',
+        'Module::Build::Pluggable::PDL'      => '0.20',
+        'Module::Build::Pluggable::Fortran'  => '0.20',
+        'Module::Build::Pluggable::CheckLib' => '1.00',
+
     },
     test_requires => {
         'Test::More'      => '0',
@@ -66,7 +39,7 @@ my $builder = Module::Build::PDL::Fortran->new(
         }
     },
 
-    add_to_cleanup => [ qw{PDL-Opt-QP-* f77_underscore}, @fortran_obj_files ],
+    add_to_cleanup => [qw{PDL-Opt-QP-*}],
 );
 
 $builder->create_build_script();

@@ -46,14 +46,15 @@ my $builder = Module::Build::PDL::Fortran->new(
         'Module::Build'      => '0.4004',
         'Module::Build::PDL' => '0.0.3',
         'Devel::CheckLibs'   => '0.99',
-        'parent' => 0,
+        'parent'             => 0,
     },
     build_requires => {
         'ExtUtils::F77'      => 0,
         'ExtUtils::CBuilder' => 0,
     },
     test_requires => {
-        'Test::More' => '0',
+        'Test::More'      => '0',
+        'Test::Exception' => 0,
     },
 
     recursive_test_files => 1,

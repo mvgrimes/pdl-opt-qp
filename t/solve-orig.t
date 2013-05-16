@@ -24,11 +24,11 @@ my $bvec = pdl($mu_0)->glue( 1, ones(1) )->flat;
 my $meq  = pdl(2);
 
 {
-    diag "n    = ", $mu->nelem;
-    diag "dmat = ", $dmat;
-    diag "dvec = ", $dvec;
-    diag "amat'= ", $amat->transpose;
-    diag "bvec = ", $bvec;
+    # diag "n    = ", $mu->nelem;
+    # diag "dmat = ", $dmat;
+    # diag "dvec = ", $dvec;
+    # diag "amat'= ", $amat->transpose;
+    # diag "bvec = ", $bvec;
 
     my $sol = qp_orig( $dmat, $dvec, $amat, $bvec, $meq );
     my $expected_sol = pdl [ 0.82745456, -0.090746123, 0.26329157 ];
@@ -40,11 +40,11 @@ my $meq  = pdl(2);
     $amat = $amat->glue( 0, identity(3) );
     $bvec = $bvec->glue( 0, zeros(3) )->flat;
 
-    diag "n    = ", $mu->nelem;
-    diag "dmat = ", $dmat;
-    diag "dvec = ", $dvec;
-    diag "amat'= ", $amat->transpose;
-    diag "bvec = ", $bvec;
+    # diag "n    = ", $mu->nelem;
+    # diag "dmat = ", $dmat;
+    # diag "dvec = ", $dvec;
+    # diag "amat'= ", $amat->transpose;
+    # diag "bvec = ", $bvec;
 
     my $sol = qp_orig( $dmat, $dvec, $amat, $bvec, $meq );
     my $expected_sol = pdl [ 1, 0, 0 ];

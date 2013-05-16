@@ -1,5 +1,8 @@
 Changes for PDL::Opt::QP
 
+0.21 - Thu May 16 15:37:23 EDT 2013
+    Implements the new interface (split Aeq and Aneq) in qp
+
 0.20 - Thu May 16 12:21:50 EDT 2013
     Converts to MB::Pluggable
     Rearranges and adds a second interface with separate Aeq and Aneq

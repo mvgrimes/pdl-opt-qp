@@ -31,8 +31,8 @@ following minimization problem:
 
     optionally constrained by:
 
-            A' x  = a
-            B  x >= b
+            Aeq'  x  = a_eq
+            Aneq  x >= b_neq
 
 # FUNCTIONS
 
@@ -60,8 +60,8 @@ This routine solves the quadratic programming optimization problem
 
     optionally constrained by:
 
-            A' x  = a
-            B  x >= b
+            Aeq'  x  = a_eq
+            Aneq  x >= b_neq
 
 
 

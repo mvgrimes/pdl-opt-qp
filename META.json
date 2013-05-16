@@ -44,7 +44,7 @@
    "provides" : {
       "PDL::Opt::QP" : {
          "file" : "lib/PDL/Opt/QP.pd",
-         "version" : "0.20"
+         "version" : "0.21"
       }
    },
    "release_status" : "stable",
@@ -59,7 +59,7 @@
          "url" : "http://github.com/mvgrimes/pdl-opt-qp"
       }
    },
-   "version" : "0.20",
+   "version" : "0.21",
    "x_test_requires" : {
       "Test::Exception" : "0",
       "Test::More" : "0"

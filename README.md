@@ -42,11 +42,11 @@ following minimization problem:
 
 ## qpgen2
 
-    Signature: (dmat(m,m); dvec(m); int fddmat(); int n();
+    Signature: (dmat(m,m); dvec(m);
           [o]sol(m); [o]lagr(q); [o]crval();
-          amat(m,q); bvec(q); int fdamat(); int q(); int meq();
+          amat(m,q); bvec(q); int meq();
           int [o]iact(q); int [o]nact();
-          int [o]iter(s=2); [t]work(z); int [io]ierr();
+          int [o]iter(s=2); [t]work(z); int [o]ierr();
       )
 
 

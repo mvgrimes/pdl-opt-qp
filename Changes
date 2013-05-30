@@ -1,5 +1,19 @@
 Changes for PDL::Opt::QP
 
+0.24 - Thu May 30 19:13:04 EDT 2013
+    Pushes more of the allocation/deallocation work to PDL::PP. Should
+    avoid some memory errors.
+
+    Allows "stacked" optimization problems. Each input matrix/vector can
+    have one additional dimension. The optimization will be done
+    (independently) for each of the dimensions.
+
+    Convert qp() to use key/value arguments for the equality and
+    inequality constraints. Much cleaner.
+
+    Thanks for run4flat++ for guiding me and rewriting much of my code to
+    take advantage of PDL::PP.
+
 0.21 - Thu May 16 15:37:23 EDT 2013
     Implements the new interface (split Aeq and Aneq) in qp
 

@@ -216,7 +216,6 @@ sub qp_orig {
   croak("Value of meq is invalid!")
     if ($meq > $q) || ($meq < 0 );
 
-  my $iter = zeros(2);               # Store info about interations
   my $ierr = pdl(0);                 # Input: 1=Factorized; Output: error flag
 
   #  Pars => 'dmat(m,m); dvec(m);
@@ -225,7 +224,7 @@ sub qp_orig {
   #      int [o]iact(q); int [o]nact();
   #      int [o]iter(s=2); [t] work(z); int [io]ierr();
 
-  my ( $sol, $lagr, $crval, $iact, $nact ) = qpgen2(
+  my ( $sol, $lagr, $crval, $iact, $nact, $iter ) = qpgen2(
                    $Dmat->copy, $dvec->copy,
                    $Amat->transpose->copy,
                    $avec->copy,
@@ -294,7 +293,6 @@ sub qp {
   croak("dimmension check failed: A_neq [n x p] and a_neq [p* x 1]")
     if $a_neq->nelem != $p;
 
-  my $iter = zeros(2);               # Store info about interations
   my $ierr = pdl(0);                 # Input: 1=Factorized; Output: error flag
 
   my $A = $A_eq->glue( 0, $A_neq )->copy;
@@ -307,7 +305,7 @@ sub qp {
   #      int [o]iact(q); int [o]nact();
   #      int [o]iter(s=2); [t] work(z); int [io]ierr();
 
-  my ( $sol, $lagr, $crval, $iact, $nact ) = qpgen2(
+  my ( $sol, $lagr, $crval, $iact, $nact, $iter ) = qpgen2(
                    $Dmat->copy, $dvec->copy,
                    $A->transpose->copy,
                    $a->copy,

@@ -128,7 +128,7 @@ pp_def("qpgen2",
         [o]sol(m); [o]lagr(q); [o]crval();
         amat(m,q); bvec(q); int meq();
         int [o]iact(q); int [o]nact();
-        int [o]iter(s=2); [t] work(z); int [io]ierr();
+        int [o]iter(s=2); [t] work(z); int [o]ierr();
     ',
     RedoDimsCode => pp_line_numbers(__LINE__, q{
         /* Calculate z */
@@ -153,8 +153,12 @@ pp_def("qpgen2",
 		
 		int m_size = $SIZE(m);
 		int q_size = $SIZE(q);
+		int factor_and_output_err;
 		
         threadloop %{
+			/* set the factor input to zero to indicate that the intput isn't
+			 * factored. */
+			factor_and_output_err = 0;
             qpgen2_(
                 $P(dmat),
                 $P(dvec),
@@ -172,8 +176,10 @@ pp_def("qpgen2",
                 $P(nact),
                 $P(iter),
                 $P(work),
-                $P(ierr)
+                &factor_and_output_err
             );
+            /* Store the error results */
+            $ierr() = factor_and_output_err;
         %}
     }),
     Doc => q{
@@ -216,20 +222,19 @@ sub qp_orig {
   croak("Value of meq is invalid!")
     if ($meq > $q) || ($meq < 0 );
 
-  my $ierr = pdl(0);                 # Input: 1=Factorized; Output: error flag
+  #my $ierr = pdl(0);                 # Input: 1=Factorized; Output: error flag
 
   #  Pars => 'dmat(m,m); dvec(m);
   #      [o]sol(m); [o]lagr(q); [o]crval();
   #      amat(m,q); bvec(q); int meq();
   #      int [o]iact(q); int [o]nact();
-  #      int [o]iter(s=2); [t] work(z); int [io]ierr();
+  #      int [o]iter(s=2); [t] work(z); int [o]ierr();
 
-  my ( $sol, $lagr, $crval, $iact, $nact, $iter ) = qpgen2(
+  my ( $sol, $lagr, $crval, $iact, $nact, $iter, $ierr ) = qpgen2(
                    $Dmat->copy, $dvec->copy,
                    $Amat->transpose->copy,
                    $avec->copy,
                    $meq,
-                   $ierr
         );
 
   croak "qp: constraints are inconsistent, no solution!"
@@ -293,7 +298,7 @@ sub qp {
   croak("dimmension check failed: A_neq [n x p] and a_neq [p* x 1]")
     if $a_neq->nelem != $p;
 
-  my $ierr = pdl(0);                 # Input: 1=Factorized; Output: error flag
+  #my $ierr = pdl(0);                 # Input: 1=Factorized; Output: error flag
 
   my $A = $A_eq->glue( 0, $A_neq )->copy;
   my $a = $a_eq->glue( 0, $a_neq )->copy;  # ->flat?
@@ -305,12 +310,11 @@ sub qp {
   #      int [o]iact(q); int [o]nact();
   #      int [o]iter(s=2); [t] work(z); int [io]ierr();
 
-  my ( $sol, $lagr, $crval, $iact, $nact, $iter ) = qpgen2(
+  my ( $sol, $lagr, $crval, $iact, $nact, $iter, $ierr ) = qpgen2(
                    $Dmat->copy, $dvec->copy,
                    $A->transpose->copy,
                    $a->copy,
                    $meq,
-                   $ierr
         );
 
   croak "qp: constraints are inconsistent, no solution!"

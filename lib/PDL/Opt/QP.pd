@@ -128,7 +128,7 @@ pp_def("qpgen2",
         [o]sol(m); [o]lagr(q); [o]crval();
         amat(m,q); bvec(q); int fdamat(); int q(); int meq();
         int [o]iact(q); int [o]nact();
-        int [o]iter(s=2); [t]work(z); int [io]ierr();
+        int [o]iter(s=2); work(z); int [io]ierr();
     ',
     GenericTypes => [D],
     Code => '
@@ -193,7 +193,7 @@ sub qp_orig {
   my $n = pdl $Dmat->dim(1);    # D is an [n x n] matrix
   my $q = pdl $Amat->dim(0);    # A is an [n x q] matrix
 
-  if( $avec->isnull ){ $avec = pdl()->reshape(1,$q); }
+  if( $avec->isnull ){ $avec = zeros(1,$q); }
 
   croak("Dmat is not square!")
     if $n != $Dmat->dim(0);               # Check D is [n x n]
@@ -206,12 +206,12 @@ sub qp_orig {
   croak("Value of meq is invalid!")
     if ($meq > $q) || ($meq < 0 );
 
-  my $iact = zeros($q);              # Store which constraints are active
-  my $nact = pdl(0);                 # Store number of active constraints
+  # my $iact = zeros($q);              # Store which constraints are active
+  # my $nact = pdl(0);                 # Store number of active constraints
   my $r    = $n < $q ? $n : $q;      # Used to size work space
-  my $sol  = zeros($n->sclr);              # Store the solution [n]
-  my $lagr = zeros($q->sclr);              # Store the Lagranges for the constraints
-  my $crval= pdl(0);                 # Value at min
+  # my $sol  = zeros($n->sclr);        # Store the solution [n]
+  # my $lagr = zeros($q->sclr);        # Store the Lagranges for the constraints
+  # my $crval= pdl(0);                 # Value at min
   my $work = zeros((2*$n+$r*($r+5)/2+2*$q+1)->sclr);  # Work space
   my $iter = zeros(2);               # Store info about interations
   my $ierr = pdl(0);                 # Input: 1=Factorized; Output: error flag
@@ -222,16 +222,24 @@ sub qp_orig {
   # print "q = $q\n";
   # print "meq = $meq\n";
 
-  my $res = qpgen2(
+  # Pars => 'dmat(m,m); dvec(m); int fddmat(); int n();
+  #     [o]sol(m); [o]lagr(q); [o]crval();
+  #     amat(m,q); bvec(q); int fdamat(); int q(); int meq();
+  #     int [o]iact(q); int [o]nact();
+  #     int [o]iter(s=2); work(z); int [io]ierr();
+  # ',
+
+  my ( $sol, $lagr, $crval, $iact, $nact ) = qpgen2(
                    $Dmat->copy, $dvec->copy,
                    $n, $n,
-                   $sol, $lagr,
-                   $crval,
+                   # $sol, $lagr,
+                   # $crval,
                    $Amat->transpose->copy,
                    $avec->copy, $n,
                    $q, $meq,
-                   $iact, $nact,
-                   $iter, $work,
+                   # $iact, $nact,
+                   # $iter,
+                   $work,
                    $ierr
         );
 
@@ -278,10 +286,10 @@ sub qp {
   my $p = pdl $A_neq->dim($col);    # A is an [n x p] matrix
   my $q = $m + $p;    # A is an [n x q] matrix
 
-  if( $A_eq->isnull ){ $A_eq = pdl()->reshape(0,$n); }
-  if( $a_eq->isnull ){ $a_eq = pdl()->reshape(1,$m); }
-  if( $A_neq->isnull ){ $A_neq = pdl()->reshape(0,$n); }
-  if( $a_neq->isnull ){ $a_neq = pdl()->reshape(1,$p); }
+  if( $A_eq->isnull ){ $A_eq = zeros(0,$n); }
+  if( $a_eq->isnull ){ $a_eq = zeros(1,$m); }
+  if( $A_neq->isnull ){ $A_neq = zeros(0,$n); }
+  if( $a_neq->isnull ){ $a_neq = zeros(1,$p); }
 
   croak("dimmension check failed: Dmat [n x n*] is not square")
     if $Dmat->dim($col) != $n;
@@ -296,12 +304,12 @@ sub qp {
   croak("dimmension check failed: A_neq [n x p] and a_neq [p* x 1]")
     if $a_neq->nelem != $p;
 
-  my $iact = zeros($q);              # Store which constraints are active
-  my $nact = pdl(0);                 # Store number of active constraints
+  # my $iact = zeros($q);              # Store which constraints are active
+  # my $nact = pdl(0);                 # Store number of active constraints
   my $r    = $n < $q ? $n : $q;      # Used to size work space
-  my $sol  = zeros($n->sclr);              # Store the solution [n]
-  my $lagr = zeros($q->sclr);              # Store the Lagranges for the constraints
-  my $crval= pdl(0);                 # Value at min
+  # my $sol  = zeros($n->sclr);        # Store the solution [n]
+  # my $lagr = zeros($q->sclr);        # Store the Lagranges for the constraints
+  # my $crval= pdl(0);                 # Value at min
   my $work = zeros((2*$n+$r*($r+5)/2+2*$q+1)->sclr);  # Work space
   my $iter = zeros(2);               # Store info about interations
   my $ierr = pdl(0);                 # Input: 1=Factorized; Output: error flag
@@ -316,16 +324,23 @@ sub qp {
   # print "q = $q\n";
   # print "meq = $meq\n";
 
-  my $res = qpgen2(
+  # Pars => 'dmat(m,m); dvec(m); int fddmat(); int n();
+  #     [o]sol(m); [o]lagr(q); [o]crval();
+  #     amat(m,q); bvec(q); int fdamat(); int q(); int meq();
+  #     int [o]iact(q); int [o]nact();
+  #     int [o]iter(s=2); work(z); int [io]ierr();
+
+  my ( $sol, $lagr, $crval, $iact, $nact ) = qpgen2(
                    $Dmat->copy, $dvec->copy,
                    $n, $n,
-                   $sol, $lagr,
-                   $crval,
+                   # $sol, $lagr,
+                   # $crval,
                    $A->transpose->copy,
                    $a->copy, $n,
                    $q, $meq,
-                   $iact, $nact,
-                   $iter, $work,
+                   # $iact, $nact,
+                   # $iter,
+                   $work,
                    $ierr
         );
 

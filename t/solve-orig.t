@@ -1,17 +1,11 @@
 #!/usr/bin/env perl
 
-use 5.014;
 use strict;
 use warnings;
 use PDL::LiteF;
 use PDL::MatrixOps;
 use PDL::Opt::QP;
 use Test::More;
-
-sub fapprox {
-    my ( $a, $b ) = @_;
-    PDL::abs( $a - $b )->max < 0.0001;
-}
 
 my $mu   = pdl(q[ 0.0427 0.0015 0.0285 ])->transpose;    # [ n x 1 ]
 my $mu_0 = 0.0427;
@@ -32,7 +26,7 @@ my $meq  = pdl(2);
 
     my $sol = qp_orig( $dmat, $dvec, $amat, $bvec, $meq );
     my $expected_sol = pdl [ 0.82745456, -0.090746123, 0.26329157 ];
-    ok( fapprox( $sol->{x}, $expected_sol ), "Got expected solution" )
+    ok( all( approx $sol->{x}, $expected_sol, 1e-8), "Got expected solution" )
       or diag "Got $sol->{x}\nExpected: $expected_sol";
 }
 
@@ -48,7 +42,7 @@ my $meq  = pdl(2);
 
     my $sol = qp_orig( $dmat, $dvec, $amat, $bvec, $meq );
     my $expected_sol = pdl [ 1, 0, 0 ];
-    ok( fapprox( $sol->{x}, $expected_sol ), "Got expected solution" )
+    ok( all( approx $sol->{x}, $expected_sol, 1e-8 ), "Got expected solution" )
       or diag "Got $sol->{x}\nExpected: $expected_sol";
 }
 

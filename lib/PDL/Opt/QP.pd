@@ -128,8 +128,18 @@ pp_def("qpgen2",
         [o]sol(m); [o]lagr(q); [o]crval();
         amat(m,q); bvec(q); int fdamat(); int q(); int meq();
         int [o]iact(q); int [o]nact();
-        int [o]iter(s=2); work(z); int [io]ierr();
+        int [o]iter(s=2); [t] work(z); int [io]ierr();
     ',
+    RedoDimsCode => pp_line_numbers(__LINE__, q{
+        /* Calculate z */
+		int m_size = $PDL(dmat)->dims[0];
+		int q_size = $PDL(amat)->dims[1];
+		
+		/* r = max(n, q) */
+		int r_size = m_size < q_size ? q_size : m_size;
+		
+		$SIZE(z) = 2*m_size + r_size*(r_size+5)/2 + 2*q_size + 1;
+    }),
     GenericTypes => [D],
     Code => '
         extern int qpgen2_(
@@ -208,11 +218,11 @@ sub qp_orig {
 
   # my $iact = zeros($q);              # Store which constraints are active
   # my $nact = pdl(0);                 # Store number of active constraints
-  my $r    = $n < $q ? $n : $q;      # Used to size work space
+  # my $r    = $n < $q ? $n : $q;      # Used to size work space
   # my $sol  = zeros($n->sclr);        # Store the solution [n]
   # my $lagr = zeros($q->sclr);        # Store the Lagranges for the constraints
   # my $crval= pdl(0);                 # Value at min
-  my $work = zeros((2*$n+$r*($r+5)/2+2*$q+1)->sclr);  # Work space
+  # my $work = zeros((2*$n+$r*($r+5)/2+2*$q+1)->sclr);  # Work space
   my $iter = zeros(2);               # Store info about interations
   my $ierr = pdl(0);                 # Input: 1=Factorized; Output: error flag
 
@@ -239,7 +249,7 @@ sub qp_orig {
                    $q, $meq,
                    # $iact, $nact,
                    # $iter,
-                   $work,
+                   # $work,
                    $ierr
         );
 
@@ -306,11 +316,11 @@ sub qp {
 
   # my $iact = zeros($q);              # Store which constraints are active
   # my $nact = pdl(0);                 # Store number of active constraints
-  my $r    = $n < $q ? $n : $q;      # Used to size work space
+  # my $r    = $n < $q ? $n : $q;      # Used to size work space
   # my $sol  = zeros($n->sclr);        # Store the solution [n]
   # my $lagr = zeros($q->sclr);        # Store the Lagranges for the constraints
   # my $crval= pdl(0);                 # Value at min
-  my $work = zeros((2*$n+$r*($r+5)/2+2*$q+1)->sclr);  # Work space
+  #my $work = zeros((2*$n+$r*($r+5)/2+2*$q+1)->sclr);  # Work space
   my $iter = zeros(2);               # Store info about interations
   my $ierr = pdl(0);                 # Input: 1=Factorized; Output: error flag
 
@@ -340,7 +350,7 @@ sub qp {
                    $q, $meq,
                    # $iact, $nact,
                    # $iter,
-                   $work,
+                   # $work,
                    $ierr
         );
 

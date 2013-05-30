@@ -1,4 +1,4 @@
-our $VERSION = '0.21';
+our $VERSION = '0.24';
 use PDL::Exporter;
 
 pp_setversion($VERSION);
@@ -111,10 +111,10 @@ following minimization problem:
 EOD
 
 # Fortran function signature:
-#  subroutine qpgen2( ->dmat, ->dvec, fddmat, n, <-sol, <-lagr, 
+#  subroutine qpgen2( ->dmat, ->dvec, fddmat, n, <-sol, <-lagr,
 #      <-crval, ->amat, ->bvec, fdamat, q, ->meq, <-iact, <-nact,
-#      <-iter, work, <->ierr)  
-#  integer n, i, j, l, l1, 
+#      <-iter, work, <->ierr)
+#  integer n, i, j, l, l1,
 # *     info, q, iact(*), iter(*), it1,
 # *     ierr, nact, iwzv, iwrv, iwrm, iwsv, iwuv, nvl,
 # *     r, fdamat, iwnbv, meq, fddmat
@@ -128,17 +128,17 @@ pp_def("qpgen2",
         [o]sol(m); [o]lagr(q); [o]crval();
         amat(m,q); bvec(q); int meq();
         int [o]iact(q); int [o]nact();
-        int [o]iter(s=2); [t] work(z); int [o]ierr();
+        int [o]iter(s=2); [t]work(z); int [o]ierr();
     ',
     RedoDimsCode => pp_line_numbers(__LINE__, q{
         /* Calculate z */
-		int m_size = $PDL(dmat)->dims[0];
-		int q_size = $PDL(amat)->dims[1];
-		
-		/* r = max(n, q) */
-		int r_size = m_size < q_size ? q_size : m_size;
-		
-		$SIZE(z) = 2*m_size + r_size*(r_size+5)/2 + 2*q_size + 1;
+        int m_size = $PDL(dmat)->dims[0];
+        int q_size = $PDL(amat)->dims[1];
+
+        /* r = max(n, q) */
+        int r_size = m_size < q_size ? q_size : m_size;
+
+        $SIZE(z) = 2*m_size + r_size*(r_size+5)/2 + 2*q_size + 1;
     }),
     GenericTypes => [D],
     Code => pp_line_numbers(__LINE__, q{
@@ -150,15 +150,15 @@ pp_def("qpgen2",
             integer *iact, integer *nact, integer *iter, double *work,
             integer *ierr
         );
-		
-		int m_size = $SIZE(m);
-		int q_size = $SIZE(q);
-		int factor_and_output_err;
-		
+
+        int m_size = $SIZE(m);
+        int q_size = $SIZE(q);
+        int factor_and_output_err;
+
         threadloop %{
-			/* set the factor input to zero to indicate that the intput isn't
-			 * factored. */
-			factor_and_output_err = 0;
+            /* set the factor input to zero to indicate that the intput isn't
+             * factored. */
+            factor_and_output_err = 0;
             qpgen2_(
                 $P(dmat),
                 $P(dvec),
@@ -251,16 +251,6 @@ sub qp_orig {
     ierr  => $ierr,
   };
 
-  # TODO: process/return the results
-  #
-  # From R implementation:
-  #
-  # list(solution=res1$sol,
-  #      value=res1$crval,
-  #      unconstrained.solution=res1$dvec,
-  #      iterations=res1$iter,
-  #      Lagrangian = res1$lagr,
-  #      iact=res1$iact[1:res1$nact])   
 }
 EOD
 
@@ -270,38 +260,42 @@ pp_addpm pp_line_numbers(__LINE__, q{
 sub qp {
   my ($Dmat, $dvec, %args) = @_;
 
-  my $col = 0;
-  my $row = 1;
+  my $col   = 0;
+  my $row   = 1;
+  my $stack = 2;
 
   my $n = pdl $Dmat->dim($row);    # D is an [n x n] matrix
-  
+  my $s = pdl $Dmat->dim($stack);  # ... of $s stacked problems
+
   # Default handling for A_eq and A_neq
   my $A_eq  = exists $args{A_eq}  ? $args{A_eq}  : zeroes(0, $n);
   my $A_neq = exists $args{A_neq} ? $args{A_neq} : zeroes(0, $n);
-  
+
   my $m = pdl $A_eq->dim($col);    # A is an [n x m] matrix
-  my $p = pdl $A_neq->dim($col);    # A is an [n x p] matrix
+  my $p = pdl $A_neq->dim($col);   # A is an [n x p] matrix
 
   # Default handling for a_eq and a_neq
-  my $a_eq  = exists $args{a_eq}  ? $args{a_eq}  : zeroes($m);
-  my $a_neq = exists $args{a_neq} ? $args{a_neq} : zeroes($p);
-  
-#  croak("dimmension check failed: Dmat [n x n*] is not square")
-#    if $Dmat->dim($col) != $n;
-#  croak("dimmension check failed: Dmat [n x n] and dvec [n* x 1]")
-#    if $dvec->nelem != $n;
-#  croak("dimmension check failed: A_eq [n* x m] and a_eq [n x 1]")
-#    if $A_eq->dim($row) != $n;
-#  croak("dimmension check failed: A_eq [n x m] and a_eq [m* x 1]")
-#    if $a_eq->nelem != $m;
-#  croak("dimmension check failed: A_neq [n* x p] and a_neq [p x 1]")
-#    if $A_neq->dim($row) != $n;
-#  croak("dimmension check failed: A_neq [n x p] and a_neq [p* x 1]")
-#    if $a_neq->nelem != $p; # why can't I say 
+  # These have to be [?x1] matrixes to ensure threading works if glue,
+  # otherwise they are relicated not just attached.
+  my $a_eq  = exists $args{a_eq}  ? $args{a_eq}  : zeroes(1, $m);
+  my $a_neq = exists $args{a_neq} ? $args{a_neq} : zeroes(1, $p);
 
+  check_dimmensions( 'Dmat', $Dmat, $n, $n, $s );
+  check_dimmensions( 'dvec', $dvec, $n, $s );
+  check_dimmensions( 'A_eq', $A_eq, $m, $n, $s );
+  check_dimmensions( 'a_eq', $a_eq, $m, $s );
+  check_dimmensions( 'A_neq', $A_neq, $p, $n, $s );
+
+  if( $p == 0 ){ # If a_neq has zero elems (per stack), then it will be [0x1]
+      check_dimmensions( 'a_neq', $a_neq, 1, $p, $s );
+  } else {       # otherwise it will be a [p] vector
+      check_dimmensions( 'a_neq', $a_neq, $p, $s );
+  }
+
+  # Combine _eq and _neq, use meq to specifiy number of equality constratins
   my $A = $A_eq->glue( 0, $A_neq );
   my $a = $a_eq->glue( 0, $a_neq );
-  my $meq = $A_eq->dim(0);
+  my $meq = $A_eq->dim($col);
 
   #  Pars => 'dmat(m,m); dvec(m);
   #      [o]sol(m); [o]lagr(q); [o]crval();
@@ -332,16 +326,30 @@ sub qp {
     ierr  => $ierr,
   };
 
-  # TODO: process/return the results
-  #
-  # From R implementation:
-  #
-  # list(solution=res1$sol,
-  #      value=res1$crval,
-  #      unconstrained.solution=res1$dvec,
-  #      iterations=res1$iter,
-  #      Lagrangian = res1$lagr,
-  #      iact=res1$iact[1:res1$nact])   
+}
+
+sub check_dimmensions {
+    my ($name, $pdl, @dims) = @_;
+
+    pop @dims if $dims[-1] == 1;    # remove last dim if a dimension of 1
+    my $got      = pdl $pdl->dims;
+    my $expected = pdl @dims;
+
+    croak( sprintf( "dimmension check failed for %s (is %s)\nexpected [%s]\n%s",
+            $name, $pdl->info, join(',',@dims), qp_usage() )
+     ) unless all $got == $expected;
+}
+
+sub qp_usage {
+    return q{
+     usage: qp( Dmat [n x n], dvec [n], A_eq  => [n x m], a_eq  => [m],
+                                        a_neq => [n x p], a_neq => [p] )
+        where A_eq and a_eq are the equality constraints
+          and A_neq and a_neq are the inequality constraints (>=)
+     All inputs can add one addition dimmension to "stack" multiple
+     Optimization problems. The returned solution (x) will have stack
+     dimmensions.
+    };
 }
 });
 

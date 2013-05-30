@@ -222,8 +222,6 @@ sub qp_orig {
   croak("Value of meq is invalid!")
     if ($meq > $q) || ($meq < 0 );
 
-  #my $ierr = pdl(0);                 # Input: 1=Factorized; Output: error flag
-
   #  Pars => 'dmat(m,m); dvec(m);
   #      [o]sol(m); [o]lagr(q); [o]crval();
   #      amat(m,q); bvec(q); int meq();
@@ -238,10 +236,10 @@ sub qp_orig {
         );
 
   croak "qp: constraints are inconsistent, no solution!"
-      if $ierr->sclr == 1;
+      if any($ierr == 1);
   croak "qp: matrix D in quadratic function is not positive definite!"
-      if $ierr->sclr == 2;
-  croak "qp: some problem with mininization" if $ierr->sclr;
+      if any($ierr == 2);
+  croak "qp: some problem with mininization" if any($ierr);
 
   return {
     x     => $sol,
@@ -298,8 +296,6 @@ sub qp {
   croak("dimmension check failed: A_neq [n x p] and a_neq [p* x 1]")
     if $a_neq->nelem != $p;
 
-  #my $ierr = pdl(0);                 # Input: 1=Factorized; Output: error flag
-
   my $A = $A_eq->glue( 0, $A_neq )->copy;
   my $a = $a_eq->glue( 0, $a_neq )->copy;  # ->flat?
   my $meq = $A_eq->dim(0);
@@ -318,10 +314,10 @@ sub qp {
         );
 
   croak "qp: constraints are inconsistent, no solution!"
-      if $ierr->sclr == 1;
+      if any($ierr == 1);
   croak "qp: matrix D in quadratic function is not positive definite!"
-      if $ierr->sclr == 2;
-  croak "qp: some problem with mininization" if $ierr->sclr;
+      if any($ierr == 2);
+  croak "qp: some problem with mininization" if any($ierr);
 
   return {
     x     => $sol,

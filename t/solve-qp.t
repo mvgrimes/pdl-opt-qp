@@ -15,11 +15,8 @@ my $dmat = pdl q[ 0.0100 0.0018 0.0011 ;
                   0.0011 0.0026 0.0199 ];
 my $dvec = zeros(3);
 my $amat = $mu      # mu' x = mu_0
-  ->glue( 0, ones( 1, 3 ) )    # 1'  x = 1    (sum(x) = 1)
-  ->copy;
-my $avec = pdl($mu_0)->glue( 0, ones(1) )->copy;
-my $bmat = null;
-my $bvec = null;
+  ->glue( 0, ones( 1, 3 ) );    # 1'  x = 1    (sum(x) = 1)
+my $avec = pdl($mu_0, 1);
 
 {
     # diag "n    = ", $mu->nelem;
@@ -30,15 +27,15 @@ my $bvec = null;
     # diag "bmat = ", $bmat;
     # diag "bvec = ", $bvec;
 
-    my $sol = qp( $dmat, $dvec, $amat, $avec, $bmat, $bvec );
+    my $sol = qp( $dmat, $dvec, A_eq => $amat, a_eq => $avec);
     my $expected_sol = pdl [ 0.82745456, -0.090746123, 0.26329157 ];
     ok( all( approx $sol->{x}, $expected_sol, 1e-8), "Got expected solution" )
       or diag "Got $sol->{x}\nExpected: $expected_sol";
 }
 
 {
-    $bmat = $bmat->glue( 0, identity(3) );
-    $bvec = $bvec->glue( 0, zeros(3) )->flat;
+    my $bmat = identity(3);
+    my $bvec = zeros(3);
 
     # diag "n    = ", $mu->nelem;
     # diag "dmat = ", $dmat;
@@ -48,7 +45,8 @@ my $bvec = null;
     # diag "bmat'= ", $bmat->transpose;
     # diag "bvec = ", $bvec;
 
-    my $sol = qp( $dmat, $dvec, $amat, $avec, $bmat, $bvec );
+    my $sol = qp( $dmat, $dvec, A_eq => $amat, a_eq => $avec,
+        A_neq => $bmat, a_neq => $bvec );
     my $expected_sol = pdl [ 1, 0, 0 ];
     ok( all( approx $sol->{x}, $expected_sol, 1e-8), "Got expected solution" )
       or diag "Got $sol->{x}\nExpected: $expected_sol";

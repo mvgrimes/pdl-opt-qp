@@ -1,4 +1,4 @@
-our $VERSION = '0.25';
+our $VERSION = '0.26_10';
 use PDL::Exporter;
 
 pp_setversion($VERSION);

@@ -46,10 +46,10 @@
    "provides" : {
       "PDL::Opt::QP" : {
          "file" : "lib/PDL/Opt/QP.pd",
-         "version" : "0.25"
+         "version" : "0.26_10"
       }
    },
-   "release_status" : "stable",
+   "release_status" : "testing",
    "resources" : {
       "bugtracker" : {
          "web" : "http://rt.cpan.org/NoAuth/Bugs.html?Dist=PDL-Opt-QP"
@@ -61,7 +61,7 @@
          "url" : "http://github.com/mvgrimes/pdl-opt-qp"
       }
    },
-   "version" : "0.25",
+   "version" : "0.26_10",
    "x_test_requires" : {
       "Test::Exception" : "0",
       "Test::More" : "0"

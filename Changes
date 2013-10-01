@@ -1,5 +1,8 @@
 Changes for PDL::Opt::QP
 
+0.25 - Tue Oct  1 17:08:52 EDT 2013
+    Adds warning if we are building until 64bit capable PDL
+
 0.25 - Tue Jun 18 14:33:10 EDT 2013
     Adds the .pod file with preprocessed documentation.
 

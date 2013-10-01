@@ -2,8 +2,14 @@
 
 use strict;
 use warnings;
-use Module::Build::Pluggable ( 'PDL', 'Fortran',
-    'CheckLib' => { lib => 'blas', } );
+use FindBin;
+use lib "$FindBin::Bin/inc";
+
+use Module::Build::Pluggable (
+    'PDL', 'Fortran',
+    'CheckLib' => { lib => 'blas', },
+    'Warn64Bit',
+);
 
 my $builder = Module::Build::Pluggable->new(
     module_name       => 'PDL::Opt::QP',
@@ -40,6 +46,8 @@ my $builder = Module::Build::Pluggable->new(
     },
 
     add_to_cleanup => [qw{PDL-Opt-QP-*}],
+
 );
 
 $builder->create_build_script();
+

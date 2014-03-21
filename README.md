@@ -36,10 +36,6 @@ following minimization problem:
 
 # FUNCTIONS
 
-
-
-
-
 ## qpgen2
 
     Signature: (dmat(m,m); dvec(m);
@@ -48,10 +44,6 @@ following minimization problem:
           int [o]iact(q); int [o]nact();
           int [o]iter(s=2); [t]work(z); int [o]ierr();
       )
-
-
-
-
 
 This routine solves the quadratic programming optimization problem
 
@@ -63,20 +55,14 @@ This routine solves the quadratic programming optimization problem
             Aeq'  x  = a_eq
             Aneq  x >= b_neq
 
-
-
 .... more docs to come ....
-
-
 
 qpgen2 ignores the bad-value flag of the input piddles.
 It will set the bad-value flag of all output piddles if the flag is set for any of the input piddles.
 
-
-
 # SEE ALSO
 
-[PDL](http://search.cpan.org/perldoc?PDL), [PDL::Opt::NonLinear](http://search.cpan.org/perldoc?PDL::Opt::NonLinear)
+[PDL](https://metacpan.org/pod/PDL), [PDL::Opt::NonLinear](https://metacpan.org/pod/PDL::Opt::NonLinear)
 
 # BUGS
 
@@ -88,7 +74,7 @@ Mark Grimes, <mgrimes@cpan.org>
 
 # COPYRIGHT AND LICENSE
 
-This software is copyright (c) 2013 by Mark Grimes, <mgrimes@cpan.org>.
+This software is copyright (c) 2014 by Mark Grimes, <mgrimes@cpan.org>.
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.

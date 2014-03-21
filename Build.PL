@@ -40,7 +40,7 @@ my $builder = Module::Build::Pluggable->new(
 
     meta_merge => {
         resources => {
-            bugtracker => 'http://rt.cpan.org/NoAuth/Bugs.html?Dist=PDL-Opt-QP',
+            bugtracker => 'https://github.com/mvgrimes/pdl-opt-qp/issues',
             repository => 'http://github.com/mvgrimes/pdl-opt-qp'
         }
     },
@@ -48,6 +48,13 @@ my $builder = Module::Build::Pluggable->new(
     add_to_cleanup => [qw{PDL-Opt-QP-*}],
 
 );
+
+# Module::Build::Plugin adds configure_requires and build_requires entries
+# for its modules. Since WARN64 is in the inc/ dir, it shouldn't be included.
+delete $builder->prereq_data->{configure_requires}
+  ->{'Module::Build::Pluggable::Warn64Bit'};
+delete $builder->prereq_data->{build_requires}
+  ->{'Module::Build::Pluggable::Warn64Bit'};
 
 $builder->create_build_script();
 

@@ -195,11 +195,11 @@ sub qp_orig {
                    $meq,
         );
 
-  croak "qp: constraints are inconsistent, no solution!"
+  croak "qp: constraints are inconsistent, no solution! (ierr=$ierr)"
       if any($ierr == 1);
-  croak "qp: matrix D in quadratic function is not positive definite!"
+  croak "qp: matrix D in quadratic function is not positive definite! (ierr=$ierr)"
       if any($ierr == 2);
-  croak "qp: some problem with mininization" if any($ierr);
+  croak "qp: some problem with minimization (ierr=$ierr)" if any($ierr);
 
   return {
     x     => $sol,
@@ -270,11 +270,11 @@ sub qp {
                    $meq,
         );
 
-  croak "qp: constraints are inconsistent, no solution!"
+  croak "qp: constraints are inconsistent, no solution! (ierr=$ierr)"
       if any($ierr == 1);
-  croak "qp: matrix D in quadratic function is not positive definite!"
+  croak "qp: matrix D in quadratic function is not positive definite! (ierr=$ierr)"
       if any($ierr == 2);
-  croak "qp: some problem with mininization" if any($ierr);
+  croak "qp: some problem with minimization (ierr=$ierr)" if any($ierr);
 
   return {
     x     => $sol,

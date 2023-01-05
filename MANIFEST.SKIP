@@ -1,7 +1,5 @@
 # File of RegExps to skip:
 
-^_build
-^Build$
 ^blib
 ~$
 \.swp$
@@ -9,7 +7,6 @@
 \.git/
 ^PDL-Opt-QP-*
 ^MANIFEST\.SKIP$
-^MYMETA.yml$
 ^\.gitignore$
 ^\.build$
 ^dist.ini$
@@ -18,18 +15,20 @@
 \.travis.yml$
 ^exp/
 ^tmp/
-^MYMETA\.json$
+^MYMETA\.
+^META\.
 ^nytprof/
 ^nytprof.out$
 .DS_Store$
 
-^lib/PDL/Opt/QP.bs$
-^lib/PDL/Opt/QP.c$
-^lib/PDL/Opt/QP.o$
-^lib/PDL/Opt/QP.pm$
-^lib/PDL/Opt/QP.xs$
+^QP.bs$
+^QP.c$
+^QP.o$
+^QP.pm$
+^QP.xs$
 ^pm_to_blib$
 ^f77_underscore$
 ^Makefile.old$
 ^Makefile$
-^src/.*\.o$
+.*\.o$
+^\.git

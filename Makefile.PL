@@ -6,14 +6,18 @@ use ExtUtils::F77;
 my $f77 = 'ExtUtils::F77';
 die "No fortran compiler found. Will not build PDL::Opt::QP on this system\n" if !$f77->testcompiler;
 
+# from PDL::Opt::NonLinear
 my @pack = qw(qp.pd QP PDL::Opt::QP);
 my @ffiles = map {s/\.f$//; $_} glob("*.f");
 my $fobj = join ' ', map {"$_\$(OBJ_EXT)"} @ffiles;
-
 my %hash = pdlpp_stdargs(\@pack);
 $hash{OBJECT} .= " $fobj";
 $hash{LIBS}[0] .= $f77->runtime . ' -lblas' ;
 $hash{clean}{FILES} .= " $fobj";
+
+# from PDL::LinearAlgebra
+our $inc = '-DF77_USCORE='. ($f77->trail_ ? '_' : '');
+$hash{INC} .= " $inc";
 
 WriteMakefile(
   %hash,

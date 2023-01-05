@@ -27,7 +27,6 @@
 ^QP.pm$
 ^QP.xs$
 ^pm_to_blib$
-^f77_underscore$
 ^Makefile.old$
 ^Makefile$
 .*\.o$

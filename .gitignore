@@ -19,7 +19,6 @@ t/data
 nytprof*
 
 *.o
-f77_underscore
 Makefile
 Makefile.old
 QP.bs

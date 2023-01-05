@@ -6,19 +6,15 @@ use PDL::Exporter;
 
 pp_setversion($VERSION);
 
-if ($^O =~ /MSWin/) {
 pp_addhdr('
+#define CONCAT_(A, B) A ## B
+#define CONCAT(A, B) CONCAT_(A, B)
+#define FORTRAN(name) CONCAT(name, F77_USCORE)
+
 /* avoid annoying warnings */
-typedef long int logical;
-typedef long int integer;
+typedef PDL_Long logical;
+typedef PDL_Long integer;
 ');
-} else {
-pp_addhdr('
-/* avoid annoying warnings */
-typedef int logical;
-typedef int integer;
-')
-}
 
 pp_addpm({At=>'Top'},<<'EOD');
 use strict;
@@ -102,7 +98,7 @@ pp_def("qpgen2",
     }),
     GenericTypes => ['D'],
     Code => pp_line_numbers(__LINE__, q{
-        extern int qpgen2_(
+        extern int FORTRAN(qpgen2)(
             double *dmat, double *dvec, integer *fddmat, integer *n,
 
             double *sol, double *lagr, double *crval, double *amat,
@@ -119,7 +115,7 @@ pp_def("qpgen2",
             /* set the factor input to zero to indicate that the intput isn't
              * factored. */
             factor_and_output_err = 0;
-            qpgen2_(
+            FORTRAN(qpgen2)(
                 $P(dmat),
                 $P(dvec),
                 &m_size,

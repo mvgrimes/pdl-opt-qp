@@ -120,13 +120,12 @@ c
 c get the initial solution
 c
       if( ierr .EQ. 0 )then
-         call dpofa(dmat,fddmat,n,info)
+         call dposv('U',n,1,dmat,fddmat,dvec,n,info)
          if( info .NE. 0 )then
             ierr = 2
             goto 999
          endif
-         call dposl(dmat,fddmat,n,dvec)
-         call dpori(dmat,fddmat,n)
+         call dtrtri('U','N',n,dmat,fddmat,info)
       else
 c        
 c Matrix D is already factorized, so we have to multiply d first with 

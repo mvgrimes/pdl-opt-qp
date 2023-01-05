@@ -23,7 +23,7 @@ WriteMakefile(
     'PDL' => '2.063',
   },
   TEST_REQUIRES => {
-      'Test::More'      => '0',
+      'Test::More'      => '0.88',
       'Test::Exception' => 0,
   },
   META_MERGE => {

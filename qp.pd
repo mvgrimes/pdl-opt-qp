@@ -1,62 +1,22 @@
+use strict;
+use warnings;
+
 our $VERSION = '0.27';
 use PDL::Exporter;
 
 pp_setversion($VERSION);
 
-# Cargo culted from PDL::Opt::NonLinear
-pp_addhdr('
-pdl    *pdl1, *pdl2, *pdl3, *pdl4, *pdl5;
-SV    *sv_pdl1, *sv_pdl2, *sv_pdl3, *sv_pdl4, *sv_pdl5;
-#include <math.h>
-#include <stdio.h>
-#include <string.h>
-/* Change names when fixing glibc-2.1 bug */
-#ifdef MY_FIXY0
-#define y0(a) fixy0(a)
-extern double fixy0(double a);
-#endif
-#ifdef MY_FIXYN
-#define yn(a,b) fixyn(a,b)
-extern double fixyn(int a, double b);
-#endif
-');
-
-## handle various cases of 'finite'
-#
 if ($^O =~ /MSWin/) {
-# _finite in VC++ 4.0
 pp_addhdr('
-#define finite _finite
-#include <float.h>
 /* avoid annoying warnings */
 typedef long int logical;
 typedef long int integer;
-typedef long int ftnlen;
-#ifdef __cplusplus
-typedef float (*paramf)(...);
-typedef double (*paramd)(...);
-typedef void (*paramv)(...);
-#else
-typedef float (*paramf)();
-typedef double (*paramd)();
-typedef void (*paramv)();
-#endif
 ');
 } else {
 pp_addhdr('
 /* avoid annoying warnings */
 typedef int logical;
 typedef int integer;
-typedef int ftnlen;
-#ifdef __cplusplus
-typedef float (*paramf)(...);
-typedef double (*paramd)(...);
-typedef void (*paramv)(...);
-#else
-typedef float (*paramf)();
-typedef double (*paramd)();
-typedef void (*paramv)();
-#endif
 ')
 }
 
@@ -140,7 +100,7 @@ pp_def("qpgen2",
 
         $SIZE(z) = 2*m_size + r_size*(r_size+5)/2 + 2*q_size + 1;
     }),
-    GenericTypes => [D],
+    GenericTypes => ['D'],
     Code => pp_line_numbers(__LINE__, q{
         extern int qpgen2_(
             double *dmat, double *dvec, integer *fddmat, integer *n,

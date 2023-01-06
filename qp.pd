@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 
-our $VERSION = '0.27_01';
+our $VERSION = '0.28';
 use PDL::Exporter;
 
 pp_setversion($VERSION);

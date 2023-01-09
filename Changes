@@ -1,3 +1,4 @@
+0.29 2023-01-09
 - fix Makefile.PL by including PDL::LinearAlgebra find_libs func
 
 0.28 2023-01-06

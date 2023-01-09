@@ -110,3 +110,26 @@ $_\$(OBJ_EXT): $_.f
 \t\$(FC) -c -o \$@ \$(FFLAGS) \$<
 " )} @ffiles;
 }
+
+sub find_libs {
+  return if $^O !~ /linux/i;
+
+  # in performance order based on libraries I've used
+  # for xnec2c in Ubuntu, Debian, SuSE, CentOS, etc.
+  # See comments here for detail:
+  #    https://github.com/KJ7LNW/xnec2c/blob/master/src/mathlib.c#L29
+  my @libs = qw/
+    openblaso
+    openblas_openmp
+    openblasp
+    openblas_pthreads
+    openblas
+    openblas_serial
+    mkl_rt/;
+
+  for my $l (@libs) {
+    return "-l$l" if (check_lib(lib => $l));
+  }
+
+  return;
+}
